@@ -7,7 +7,6 @@ import * as THREE from 'three';
 type Props = {
   ambient?: boolean;
   mouse: React.MutableRefObject<{ x: number; y: number }>;
-  scrollPulse: React.MutableRefObject<number>;
 };
 
 const CORE = '#7ef9ff';
@@ -17,7 +16,7 @@ const ACCENT = '#e0f2fe';
 const CORE_RED = '#fb7185';
 const CORE_RED_EMISSIVE = '#e11d48';
 const RING_RED = '#f43f5e';
-/** Mistura máxima com vermelho no fim do scroll (nunca 100%). */
+/** Mistura máxima com vermelho (nunca 100%). */
 const MAX_RED_BLEND = 0.58;
 
 const colorCyan = new THREE.Color(CORE);
@@ -32,7 +31,7 @@ const tmpEmissive = new THREE.Color();
 const tmpRing = new THREE.Color();
 const tmpAccent = new THREE.Color();
 
-export function NeuralCore({ ambient = true, mouse, scrollPulse }: Props) {
+export function NeuralCore({ ambient = true, mouse }: Props) {
   const group = useRef<THREE.Group>(null);
   const core = useRef<THREE.Mesh>(null);
   const inner = useRef<THREE.Mesh>(null);
@@ -60,8 +59,10 @@ export function NeuralCore({ ambient = true, mouse, scrollPulse }: Props) {
     const t = state.clock.elapsedTime;
     if (!core.current || !wire.current || !rings.current || !inner.current) return;
 
-    const targetBlend = Math.min(MAX_RED_BLEND, Math.max(0, scrollPulse.current) * MAX_RED_BLEND);
-    redBlend.current = THREE.MathUtils.lerp(redBlend.current, targetBlend, 0.06);
+    // Distância do ponteiro/dedo ao centro da tela → mais vermelho nas bordas
+    const pointerDist = Math.min(1, Math.hypot(mouse.current.x, mouse.current.y));
+    const targetBlend = pointerDist * MAX_RED_BLEND;
+    redBlend.current = THREE.MathUtils.lerp(redBlend.current, targetBlend, 0.08);
     const blend = redBlend.current;
 
     tmpColor.copy(colorCyan).lerp(colorRed, blend);
@@ -70,7 +71,7 @@ export function NeuralCore({ ambient = true, mouse, scrollPulse }: Props) {
     tmpAccent.copy(colorAccent).lerp(colorRed, blend * 0.7);
 
     const breath =
-      1 + Math.sin(t * 2.2) * 0.055 + Math.sin(t * 0.7) * 0.02 + scrollPulse.current * 0.05;
+      1 + Math.sin(t * 2.2) * 0.055 + Math.sin(t * 0.7) * 0.02 + blend * 0.04;
 
     core.current.scale.setScalar(breath);
     inner.current.scale.setScalar(breath * 0.55 + Math.sin(t * 4) * 0.03);

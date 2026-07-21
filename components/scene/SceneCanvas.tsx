@@ -12,22 +12,33 @@ type Props = {
 
 function SceneContent({ ambient }: { ambient: boolean }) {
   const mouse = useRef({ x: 0, y: 0 });
-  const scrollPulse = useRef(0);
 
   useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    const updatePointer = (clientX: number, clientY: number) => {
+      mouse.current.x = (clientX / window.innerWidth) * 2 - 1;
+      mouse.current.y = -(clientY / window.innerHeight) * 2 + 1;
     };
-    const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      scrollPulse.current = max > 0 ? window.scrollY / max : 0;
+
+    const onPointer = (e: PointerEvent) => {
+      updatePointer(e.clientX, e.clientY);
     };
-    window.addEventListener('pointermove', onMove, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const onTouch = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      updatePointer(touch.clientX, touch.clientY);
+    };
+
+    window.addEventListener('pointermove', onPointer, { passive: true });
+    window.addEventListener('pointerdown', onPointer, { passive: true });
+    window.addEventListener('touchstart', onTouch, { passive: true });
+    window.addEventListener('touchmove', onTouch, { passive: true });
+
     return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('pointermove', onPointer);
+      window.removeEventListener('pointerdown', onPointer);
+      window.removeEventListener('touchstart', onTouch);
+      window.removeEventListener('touchmove', onTouch);
     };
   }, []);
 
@@ -45,7 +56,7 @@ function SceneContent({ ambient }: { ambient: boolean }) {
       <ambientLight intensity={0.25} color="#0c4a6e" />
       <directionalLight position={[4, 3, 2]} intensity={0.35} color="#bae6fd" />
       <Particles count={count} mouse={mouse} ambient={ambient} />
-      <NeuralCore ambient={ambient} mouse={mouse} scrollPulse={scrollPulse} />
+      <NeuralCore ambient={ambient} mouse={mouse} />
       <EffectComposer multisampling={0}>
         <Bloom
           intensity={ambient ? 0.85 : 1.15}
