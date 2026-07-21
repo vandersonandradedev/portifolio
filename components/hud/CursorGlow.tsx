@@ -26,14 +26,14 @@ export function CursorGlow() {
   return (
     <>
       <div
-        className="pointer-events-none fixed left-0 top-0 z-20 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(94,234,212,0.08),transparent_68%)]"
+        className="pointer-events-none fixed left-0 top-0 z-20 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.12),rgba(103,232,249,0.04)_40%,transparent_68%)]"
         style={{ transform: `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%)` }}
         aria-hidden
       />
       <div
         className="pointer-events-none fixed inset-0 z-10"
         style={{
-          background: `radial-gradient(420px circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(94,234,212,0.04), transparent 50%)`
+          background: `radial-gradient(480px circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(56,189,248,0.06), transparent 50%)`
         }}
         aria-hidden
       />

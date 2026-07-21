@@ -43,13 +43,14 @@ export function PortfolioApp({
       <div className={`axion-gradient min-h-screen transition-opacity duration-700 ${ready ? 'opacity-100' : 'opacity-40'}`}>
         <div className="pointer-events-none fixed inset-0 z-0">
           <SceneCanvas ambient={ready} />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#020617]/20 to-[#020617]/85" />
         </div>
 
         <div className="pointer-events-none fixed inset-0 z-[1]">
-          <div className="absolute left-3 top-3 h-7 w-7 border-l border-t border-axion/25" />
-          <div className="absolute right-3 top-3 h-7 w-7 border-r border-t border-axion/25" />
-          <div className="absolute bottom-3 left-3 h-7 w-7 border-b border-l border-axion/25" />
-          <div className="absolute bottom-3 right-3 h-7 w-7 border-b border-r border-axion/25" />
+          <div className="absolute left-3 top-3 h-8 w-8 border-l border-t border-axion/30" />
+          <div className="absolute right-3 top-3 h-8 w-8 border-r border-t border-axion/30" />
+          <div className="absolute bottom-3 left-3 h-8 w-8 border-b border-l border-axion/30" />
+          <div className="absolute bottom-3 right-3 h-8 w-8 border-b border-r border-axion/30" />
         </div>
 
         <CursorGlow />
