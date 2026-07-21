@@ -25,8 +25,11 @@ export function Stack({ categories }: { categories: SkillCategory[] }) {
                 {category.title}
               </h3>
               <ul className="space-y-3">
-                {category.skills.slice(0, 8).map((skill) => (
-                  <li key={skill.name} className="flex items-center justify-between gap-3">
+                {category.skills.slice(0, 8).map((skill, index) => (
+                  <li
+                    key={`${category.id}-${skill.name}-${index}`}
+                    className="flex items-center justify-between gap-3"
+                  >
                     <div>
                       <p className="text-sm text-ink">{skill.name}</p>
                       <p className="font-mono text-[10px] uppercase tracking-wider text-axion/70">

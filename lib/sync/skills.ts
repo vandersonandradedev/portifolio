@@ -139,7 +139,22 @@ export function buildSkillsFromProjects(projects: Project[]): SkillCategory[] {
 
   for (const skill of skills) {
     const bucket = categoryMap.get(skill.category);
-    if (bucket) bucket.skills.push(skill);
+    if (!bucket) continue;
+
+    const existing = bucket.skills.find(
+      (s) => s.name.toLowerCase() === skill.name.toLowerCase()
+    );
+
+    if (existing) {
+      existing.percentage = Math.max(existing.percentage, skill.percentage);
+      existing.auto = existing.auto || skill.auto;
+      if (skill.auto && skill.tooltip.length > existing.tooltip.length) {
+        existing.tooltip = skill.tooltip;
+      }
+      continue;
+    }
+
+    bucket.skills.push(skill);
   }
 
   for (const category of categoryMap.values()) {
