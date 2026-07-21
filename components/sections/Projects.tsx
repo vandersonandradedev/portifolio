@@ -6,6 +6,7 @@ import type { Project } from '@/lib/types';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/Button';
+import { EyeIcon, HeartIcon } from '@/components/ui/icons';
 import {
   applyStatsToProjects,
   fetchAllStats,
@@ -25,12 +26,16 @@ export function Projects({ initialProjects }: Props) {
   const [scanning, setScanning] = useState(false);
   const [scanLabel, setScanLabel] = useState('Scanning...');
   const [scanProgress, setScanProgress] = useState(0);
+  const [liked, setLiked] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetchAllStats().then((remote) => {
       setProjects((prev) => applyStatsToProjects(prev, remote));
     });
-  }, []);
+    setLiked(
+      Object.fromEntries(initialProjects.map((p) => [p.slug, hasLikedLocally(p.slug)]))
+    );
+  }, [initialProjects]);
 
   const filtered =
     filter === 'all'
@@ -72,9 +77,10 @@ export function Projects({ initialProjects }: Props) {
 
   const onLike = async (slug: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (hasLikedLocally(slug)) return;
+    if (liked[slug] || hasLikedLocally(slug)) return;
     const result = await recordLike(slug);
     if (!result) return;
+    setLiked((prev) => ({ ...prev, [slug]: true }));
     setProjects((prev) =>
       prev.map((p) =>
         p.slug === slug ? { ...p, likes: result.likes, views: result.views ?? p.views } : p
@@ -134,17 +140,41 @@ export function Projects({ initialProjects }: Props) {
                   </span>
                 ))}
               </div>
-              <div className="flex items-center justify-between text-xs text-muted">
-                <span>
-                  ♥ {project.likes} · 👁 {project.views}
-                </span>
+              <div className="flex items-center justify-between gap-3 text-xs text-muted">
+                <div className="flex items-center gap-3 font-mono tabular-nums">
+                  <span
+                    className={`inline-flex items-center gap-1.5 ${
+                      liked[project.slug] ? 'text-axion' : ''
+                    }`}
+                    title="Curtidas"
+                  >
+                    <HeartIcon
+                      className="h-3.5 w-3.5"
+                      filled={Boolean(liked[project.slug])}
+                    />
+                    {project.likes}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5" title="Visualizações">
+                    <EyeIcon className="h-3.5 w-3.5 opacity-80" />
+                    {project.views}
+                  </span>
+                </div>
                 <button
                   type="button"
-                  className="border border-axion/30 px-2 py-1 text-axion hover:bg-axion/10"
+                  className={`inline-flex items-center gap-1.5 border px-2.5 py-1 transition ${
+                    liked[project.slug]
+                      ? 'border-axion/50 bg-axion/10 text-axion'
+                      : 'border-axion/30 text-axion hover:border-axion/60 hover:bg-axion/10'
+                  }`}
                   onClick={(e) => onLike(project.slug, e)}
-                  disabled={hasLikedLocally(project.slug)}
+                  disabled={Boolean(liked[project.slug])}
+                  aria-label={liked[project.slug] ? 'Já curtido' : 'Curtir projeto'}
                 >
-                  {hasLikedLocally(project.slug) ? 'Curtido' : 'Curtir'}
+                  <HeartIcon
+                    className="h-3 w-3"
+                    filled={Boolean(liked[project.slug])}
+                  />
+                  {liked[project.slug] ? 'Curtido' : 'Curtir'}
                 </button>
               </div>
             </div>
@@ -206,6 +236,23 @@ export function Projects({ initialProjects }: Props) {
               <h3 id="project-modal-title" className="mb-3 font-display text-2xl font-semibold">
                 {selected.title}
               </h3>
+              <div className="mb-4 flex items-center gap-4 font-mono text-xs tabular-nums text-muted">
+                <span
+                  className={`inline-flex items-center gap-1.5 ${
+                    liked[selected.slug] ? 'text-axion' : ''
+                  }`}
+                >
+                  <HeartIcon className="h-3.5 w-3.5" filled={Boolean(liked[selected.slug])} />
+                  {selected.likes ??
+                    projects.find((p) => p.slug === selected.slug)?.likes ??
+                    0}{' '}
+                  curtidas
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <EyeIcon className="h-3.5 w-3.5 opacity-80" />
+                  {selected.views} views
+                </span>
+              </div>
               <p className="mb-4 text-sm leading-relaxed text-muted">
                 {selected.longDescription}
               </p>
