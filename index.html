@@ -103,6 +103,84 @@
   <!-- Barra de progresso do scroll -->
   <div class="scroll-progress" id="scroll-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da leitura"></div>
 
+  <!-- Cursor HUD -->
+  <div class="jarvis-cursor" id="jarvis-cursor" aria-hidden="true"></div>
+  <div class="jarvis-cursor-glow" id="jarvis-cursor-glow" aria-hidden="true"></div>
+
+  <!-- Camada HUD cinematográfica -->
+  <div class="jarvis-hud" id="jarvis-hud" aria-hidden="true">
+    <div class="jarvis-hud__grid"></div>
+    <div class="jarvis-hud__vignette"></div>
+    <div class="jarvis-hud__scanner"></div>
+    <div class="jarvis-hud__corner jarvis-hud__corner--tl"></div>
+    <div class="jarvis-hud__corner jarvis-hud__corner--tr"></div>
+    <div class="jarvis-hud__corner jarvis-hud__corner--bl"></div>
+    <div class="jarvis-hud__corner jarvis-hud__corner--br"></div>
+    <div class="jarvis-hud__status">SYSTEM ONLINE · VANDINDEV221</div>
+
+    <div class="jarvis-hud__dataflow" data-hud-tilt="4">
+      <div class="jarvis-hud__dataflow-row">
+        <span>AI</span>
+        <div class="jarvis-hud__dataflow-bar" data-hud-bar></div>
+      </div>
+      <div class="jarvis-hud__dataflow-row">
+        <span>Memory</span>
+        <div class="jarvis-hud__dataflow-bar" data-hud-bar></div>
+      </div>
+      <div class="jarvis-hud__dataflow-row">
+        <span>Vision</span>
+        <div class="jarvis-hud__dataflow-bar" data-hud-bar></div>
+      </div>
+      <div class="jarvis-hud__dataflow-row">
+        <span>Speech</span>
+        <div class="jarvis-hud__dataflow-bar" data-hud-bar></div>
+      </div>
+    </div>
+
+    <div class="jarvis-hud__holo" data-hud-tilt="8">
+      <div class="jarvis-hud__holo-card">
+        <span class="jarvis-hud__holo-label">CPU</span>
+        <span class="jarvis-hud__holo-value" data-hud-metric="cpu">72%</span>
+      </div>
+      <div class="jarvis-hud__holo-card">
+        <span class="jarvis-hud__holo-label">MEM</span>
+        <span class="jarvis-hud__holo-value" data-hud-metric="mem">54%</span>
+      </div>
+      <div class="jarvis-hud__holo-card">
+        <span class="jarvis-hud__holo-label">NET</span>
+        <span class="jarvis-hud__holo-value" data-hud-metric="net">81%</span>
+      </div>
+      <div class="jarvis-hud__holo-card">
+        <span class="jarvis-hud__holo-label">GPU</span>
+        <span class="jarvis-hud__holo-value" data-hud-metric="gpu">63%</span>
+      </div>
+    </div>
+
+    <div class="jarvis-hud__energy">
+      <div class="jarvis-hud__energy-line"></div>
+      <div class="jarvis-hud__energy-line"></div>
+      <div class="jarvis-hud__energy-line"></div>
+    </div>
+
+    <div class="jarvis-hud__voice" aria-hidden="true">
+      <span class="jarvis-hud__voice-dot"></span>
+      <span class="jarvis-hud__voice-dot"></span>
+      <span class="jarvis-hud__voice-dot"></span>
+      <span class="jarvis-hud__voice-dot"></span>
+      <span class="jarvis-hud__voice-dot"></span>
+      <span class="jarvis-hud__voice-dot"></span>
+      <span class="jarvis-hud__voice-dot"></span>
+    </div>
+
+    <div class="jarvis-hud__radar">
+      <div class="jarvis-hud__radar-sweep"></div>
+      <span class="jarvis-hud__radar-dot"></span>
+      <span class="jarvis-hud__radar-dot"></span>
+      <span class="jarvis-hud__radar-dot"></span>
+      <span class="jarvis-hud__radar-dot"></span>
+    </div>
+  </div>
+
   <!-- Objetos flutuantes (após a intro) -->
   <div class="floating-shapes" aria-hidden="true">
     <div class="floating-shapes__blob floating-shapes__blob--1 animate-float"></div>
@@ -114,8 +192,11 @@
   </div>
 
   <!-- Hero Section -->
-  <section id="home" class="hero section" role="main">
-    <div class="hero__container">
+  <section id="home" class="hero section jarvis-hero" role="main">
+    <div class="jarvis-scene" aria-hidden="true">
+      <canvas id="jarvis-canvas"></canvas>
+    </div>
+    <div class="hero__container" data-hud-tilt="5">
       <p class="hero__greeting">Olá, meu nome é</p>
       <h1 class="hero__name">Vanderson Carlos Andrade Lindoso</h1>
       <h2 class="hero__title">Desenvolvedor Web Full Stack</h2>
@@ -139,9 +220,6 @@
         <a href="#contact" class="btn">Entrar em Contato</a>
       </div>
     </div>
-   <!-- <a href="#about" class="hero__scroll-indicator" aria-label="Rolar para baixo">
-      <span>Scroll</span>
-    </a> -->
   </section>
 
   <!-- About Section -->

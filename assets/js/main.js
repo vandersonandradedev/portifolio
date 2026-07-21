@@ -12,12 +12,29 @@ import Skills from './modules/skills.js';
 import Experience from './modules/experience.js';
 import Intro from './modules/intro.js';
 import Interactions from './modules/interactions.js';
+import JarvisHUD from './modules/jarvisHUD.js';
 import { lazyLoadImages, measurePerformance } from './utils/performance.js';
+
+async function initJarvisScene() {
+  const canvas = document.getElementById('jarvis-canvas');
+  if (!canvas) return null;
+
+  try {
+    const { default: JarvisScene } = await import('./modules/jarvisScene.js');
+    return new JarvisScene(canvas);
+  } catch (error) {
+    console.warn('Cena 3D indisponível neste dispositivo.', error);
+    return null;
+  }
+}
 
 // Aguarda DOM estar pronto
 document.addEventListener('DOMContentLoaded', () => {
   // Intro de apresentação (roda primeiro)
   new Intro();
+
+  // HUD cinematográfico J.A.R.V.I.S.
+  const jarvisHUD = new JarvisHUD();
 
   // Inicializa módulos
   const navigation = new Navigation();
@@ -29,17 +46,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const contact = new Contact();
   const experience = new Experience();
 
+  // Cena 3D em lazy load (Three.js)
+  let jarvisScene = null;
+  initJarvisScene().then((scene) => {
+    jarvisScene = scene;
+    if (window.portfolio) window.portfolio.jarvisScene = scene;
+  });
+
   // Performance
   lazyLoadImages();
   measurePerformance();
 
   // Console personalizado
-  console.log('%c👋 Olá! Bem-vindo ao meu portfólio!', 
-    'font-size: 20px; font-weight: bold; color: #64ffda;');
-  console.log('%c💻 Desenvolvido com paixão e dedicação', 
-    'font-size: 14px; color: #8892b0;');
-  console.log('%c🔗 GitHub: https://github.com/VandinDev221', 
-    'font-size: 12px; color: #64ffda;');
+  console.log('%c⚡ SYSTEM ONLINE — VandinDev221',
+    'font-size: 18px; font-weight: bold; color: #00eaff;');
+  console.log('%c🔗 GitHub: https://github.com/VandinDev221',
+    'font-size: 12px; color: #00eaff;');
 
   // Easter egg
   let konamiCode = [];
@@ -52,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     if (konamiCode.join(',') === konamiSequence.join(',')) {
-      console.log('%c🎉 Código Konami ativado!', 'font-size: 24px; font-weight: bold; color: #64ffda;');
+      console.log('%c🎉 Código Konami ativado!', 'font-size: 24px; font-weight: bold; color: #00eaff;');
       document.body.style.animation = 'pulse 1s infinite';
       setTimeout(() => {
         document.body.style.animation = '';
@@ -70,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     theme,
     contact,
     skills,
-    experience
+    experience,
+    jarvisHUD,
+    jarvisScene
   };
 });

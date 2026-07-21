@@ -1,0 +1,508 @@
+/* ═══════════════════════════════════════════════════════════
+   J.A.R.V.I.S. HUD — camada cinematográfica
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --jarvis-cyan: #00eaff;
+  --jarvis-cyan-dim: rgba(0, 234, 255, 0.35);
+  --jarvis-cyan-glow: rgba(0, 234, 255, 0.55);
+  --jarvis-panel: rgba(4, 18, 28, 0.55);
+  --jarvis-border: rgba(0, 234, 255, 0.28);
+  --jarvis-grid: rgba(0, 234, 255, 0.06);
+  --cursor-x: 50%;
+  --cursor-y: 50%;
+}
+
+body.jarvis-mode {
+  --color-accent: #00eaff;
+  --color-accent-secondary: #38bdf8;
+  --bg-primary: #02070c;
+  --bg-secondary: #041018;
+  --bg-tertiary: #071822;
+  --bg-card: rgba(4, 18, 28, 0.72);
+  --bg-glass: rgba(0, 234, 255, 0.04);
+  --border-color: rgba(0, 234, 255, 0.18);
+  --shadow-accent: 0 0 40px rgba(0, 234, 255, 0.25);
+  --gradient-hero:
+    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(0, 80, 100, 0.35), transparent 60%),
+    radial-gradient(ellipse 90% 70% at 70% 10%, rgba(0, 40, 70, 0.5), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 15% 85%, rgba(0, 60, 90, 0.25), transparent 50%),
+    linear-gradient(180deg, #010508 0%, #020b12 40%, #031018 100%);
+}
+
+body.jarvis-custom-cursor,
+body.jarvis-custom-cursor * {
+  cursor: none !important;
+}
+
+/* ─── Scene canvas ─── */
+.jarvis-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+.jarvis-scene canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.hero.jarvis-hero {
+  isolation: isolate;
+}
+
+.hero.jarvis-hero .hero__container {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  max-width: 560px;
+  margin-right: auto;
+  margin-left: clamp(0px, 4vw, 2rem);
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(135deg, rgba(4, 18, 28, 0.75), rgba(2, 10, 16, 0.45));
+  border: 1px solid var(--jarvis-border);
+  border-radius: 4px;
+  backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    0 0 0 1px rgba(0, 234, 255, 0.06) inset,
+    0 24px 80px rgba(0, 0, 0, 0.45),
+    0 0 60px rgba(0, 234, 255, 0.08);
+}
+
+.hero.jarvis-hero .hero__container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--jarvis-cyan), transparent);
+  opacity: 0.7;
+}
+
+.hero.jarvis-hero .hero__name {
+  background: linear-gradient(135deg, #e8fbff 20%, var(--jarvis-cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 24px rgba(0, 234, 255, 0.25));
+}
+
+.hero.jarvis-hero .hero__greeting {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.hero.jarvis-hero .hero__greeting::before {
+  content: '// ';
+  opacity: 0.6;
+}
+
+/* ─── HUD root ─── */
+.jarvis-hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 25;
+  overflow: hidden;
+}
+
+.jarvis-hud__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--jarvis-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--jarvis-grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+  opacity: 0.5;
+}
+
+.jarvis-hud__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+.jarvis-hud__scanner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--jarvis-cyan), transparent);
+  box-shadow: 0 0 20px var(--jarvis-cyan-glow), 0 0 40px var(--jarvis-cyan-dim);
+  animation: jarvis-scan 4.5s linear infinite;
+  opacity: 0.55;
+}
+
+@keyframes jarvis-scan {
+  0% { top: -2%; opacity: 0; }
+  10% { opacity: 0.55; }
+  90% { opacity: 0.55; }
+  100% { top: 102%; opacity: 0; }
+}
+
+/* ─── Corner brackets ─── */
+.jarvis-hud__corner {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-color: var(--jarvis-cyan);
+  border-style: solid;
+  opacity: 0.55;
+}
+
+.jarvis-hud__corner--tl {
+  top: 12px;
+  left: 12px;
+  border-width: 2px 0 0 2px;
+}
+
+.jarvis-hud__corner--tr {
+  top: 12px;
+  right: 12px;
+  border-width: 2px 2px 0 0;
+}
+
+.jarvis-hud__corner--bl {
+  bottom: 12px;
+  left: 12px;
+  border-width: 0 0 2px 2px;
+}
+
+.jarvis-hud__corner--br {
+  bottom: 12px;
+  right: 12px;
+  border-width: 0 2px 2px 0;
+}
+
+/* ─── Radar ─── */
+.jarvis-hud__radar {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 1px solid var(--jarvis-border);
+  background:
+    radial-gradient(circle, transparent 55%, rgba(0, 234, 255, 0.08) 56%, transparent 58%),
+    radial-gradient(circle, transparent 30%, rgba(0, 234, 255, 0.06) 31%, transparent 33%),
+    rgba(2, 10, 16, 0.5);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 234, 255, 0.12);
+}
+
+.jarvis-hud__radar-sweep {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 234, 255, 0.35) 50deg, transparent 70deg);
+  transform-origin: center;
+}
+
+.jarvis-hud__radar-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--jarvis-cyan);
+  box-shadow: 0 0 8px var(--jarvis-cyan);
+  animation: jarvis-blip 2.4s ease-in-out infinite;
+}
+
+.jarvis-hud__radar-dot:nth-child(2) { top: 28%; left: 62%; animation-delay: 0.3s; }
+.jarvis-hud__radar-dot:nth-child(3) { top: 58%; left: 30%; animation-delay: 0.8s; }
+.jarvis-hud__radar-dot:nth-child(4) { top: 42%; left: 72%; animation-delay: 1.2s; }
+.jarvis-hud__radar-dot:nth-child(5) { top: 70%; left: 55%; animation-delay: 1.6s; }
+
+@keyframes jarvis-blip {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+/* ─── Data flow ─── */
+.jarvis-hud__dataflow {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 160px;
+  padding: 14px 12px;
+  background: var(--jarvis-panel);
+  border: 1px solid var(--jarvis-border);
+  border-radius: 2px;
+  backdrop-filter: blur(12px);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--jarvis-cyan);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.jarvis-hud__dataflow-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.jarvis-hud__dataflow-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--jarvis-cyan), transparent);
+  box-shadow: 0 0 10px var(--jarvis-cyan-dim);
+  width: 50%;
+  transition: width 0.15s linear;
+}
+
+/* ─── Hologram panels ─── */
+.jarvis-hud__holo {
+  position: absolute;
+  top: 80px;
+  right: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 200px;
+}
+
+.jarvis-hud__holo-card {
+  padding: 10px 12px;
+  background: linear-gradient(145deg, rgba(0, 234, 255, 0.08), rgba(4, 18, 28, 0.7));
+  border: 1px solid var(--jarvis-border);
+  border-radius: 2px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.06) inset;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.jarvis-hud__holo-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: rgba(0, 234, 255, 0.65);
+  margin-bottom: 4px;
+}
+
+.jarvis-hud__holo-value {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--jarvis-cyan);
+  text-shadow: 0 0 12px var(--jarvis-cyan-dim);
+}
+
+/* ─── Energy lines ─── */
+.jarvis-hud__energy {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, 70vw);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0.5;
+}
+
+.jarvis-hud__energy-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--jarvis-cyan), transparent);
+  animation: jarvis-energy 2.8s ease-in-out infinite;
+}
+
+.jarvis-hud__energy-line:nth-child(2) {
+  width: 70%;
+  margin-left: 15%;
+  animation-delay: 0.4s;
+  opacity: 0.7;
+}
+
+.jarvis-hud__energy-line:nth-child(3) {
+  width: 85%;
+  margin-left: 7.5%;
+  animation-delay: 0.8s;
+}
+
+@keyframes jarvis-energy {
+  0%, 100% { transform: scaleX(0.7); opacity: 0.3; }
+  50% { transform: scaleX(1); opacity: 1; }
+}
+
+/* ─── Voice visualizer ─── */
+.jarvis-hud__voice {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 28px;
+}
+
+.jarvis-hud__voice-dot {
+  width: 3px;
+  height: 100%;
+  background: var(--jarvis-cyan);
+  border-radius: 2px;
+  transform-origin: bottom;
+  box-shadow: 0 0 8px var(--jarvis-cyan-dim);
+}
+
+/* ─── Status bar ─── */
+.jarvis-hud__status {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--jarvis-cyan);
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.jarvis-hud__status::before {
+  content: '● ';
+  animation: jarvis-status-blink 1.6s step-end infinite;
+}
+
+@keyframes jarvis-status-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* ─── Cursor ─── */
+.jarvis-cursor,
+.jarvis-cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+
+.jarvis-cursor {
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 1.5px solid var(--jarvis-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--jarvis-cyan-dim);
+  transition: transform 0.08s linear, width 0.15s, height 0.15s, margin 0.15s;
+}
+
+.jarvis-cursor.is-active {
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  background: rgba(0, 234, 255, 0.15);
+}
+
+.jarvis-cursor-glow {
+  width: 180px;
+  height: 180px;
+  margin: -90px 0 0 -90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 234, 255, 0.12), transparent 70%);
+  transition: transform 0.12s linear;
+}
+
+.jarvis-cursor.is-hidden,
+.jarvis-cursor-glow.is-hidden {
+  display: none;
+}
+
+/* ─── Ambient light follow ─── */
+body.jarvis-mode::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 35;
+  background: radial-gradient(
+    500px circle at var(--cursor-x) var(--cursor-y),
+    rgba(0, 234, 255, 0.06),
+    transparent 45%
+  );
+}
+
+/* ─── Glass panels system-wide ─── */
+body.jarvis-mode .about__stat-card,
+body.jarvis-mode .skills__category,
+body.jarvis-mode .projects__card,
+body.jarvis-mode .contact__info-item {
+  border-color: var(--jarvis-border);
+  background: linear-gradient(160deg, rgba(0, 234, 255, 0.06), rgba(4, 18, 28, 0.8));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 0 1px rgba(0, 234, 255, 0.04) inset, 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+body.jarvis-mode .section-title {
+  text-shadow: 0 0 40px rgba(0, 234, 255, 0.2);
+}
+
+body.jarvis-mode .header {
+  background: rgba(2, 8, 14, 0.72);
+  border-bottom: 1px solid var(--jarvis-border);
+  backdrop-filter: blur(20px);
+}
+
+body.jarvis-mode .btn-primary {
+  background: transparent;
+  border: 1px solid var(--jarvis-cyan);
+  color: var(--jarvis-cyan);
+  box-shadow: 0 0 24px rgba(0, 234, 255, 0.15);
+  text-shadow: 0 0 12px rgba(0, 234, 255, 0.4);
+}
+
+body.jarvis-mode .btn-primary:hover {
+  background: rgba(0, 234, 255, 0.12);
+  box-shadow: 0 0 40px rgba(0, 234, 255, 0.3);
+}
+
+body.jarvis-mode .floating-shapes {
+  opacity: 0.35;
+  filter: hue-rotate(10deg) saturate(1.4);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .jarvis-hud__dataflow,
+  .jarvis-hud__holo,
+  .jarvis-hud__energy,
+  .jarvis-hud__radar {
+    display: none;
+  }
+
+  .hero.jarvis-hero .hero__container {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  body.jarvis-custom-cursor,
+  body.jarvis-custom-cursor * {
+    cursor: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jarvis-hud__scanner,
+  .jarvis-hud__energy-line,
+  .jarvis-hud__radar-dot {
+    animation: none;
+  }
+}

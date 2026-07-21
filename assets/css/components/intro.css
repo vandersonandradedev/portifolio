@@ -23,8 +23,17 @@
 .intro-overlay__bg {
   position: absolute;
   inset: 0;
-  background: var(--bg-primary);
-  opacity: 0.98;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(0, 60, 80, 0.45), transparent 70%),
+    #010508;
+  opacity: 1;
+}
+
+.intro-overlay__phrase {
+  color: #00eaff;
+  text-shadow: 0 0 30px rgba(0, 234, 255, 0.35);
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
 }
 
 .intro-overlay__skip {
