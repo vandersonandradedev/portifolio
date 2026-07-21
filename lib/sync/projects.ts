@@ -156,8 +156,9 @@ export async function syncProjects(): Promise<{
     );
 
     return { projects, repoCount, source: 'github' };
-  } catch (error) {
-    console.warn('Sync fallback:', error);
+  } catch {
+    // Sem GITHUB_TOKEN (ou rate limit): usa content/projects.json.
+    // Não logar aqui — em RSC o warn vai para o console do browser.
     const projects = await Promise.all(
       (config.overrides || []).map(async (override, index) =>
         fallbackFromOverride(override, config.githubUsername, index)

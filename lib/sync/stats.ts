@@ -65,13 +65,15 @@ export async function recordView(slug: string) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slug, action: 'view' })
     });
-    if (!response.ok) {
+    const data = response.ok ? await response.json() : null;
+
+    if (!response.ok || data?.offline) {
       const local = readLocalStats(slug);
       const next = { ...local, views: local.views + 1 };
       saveLocalStats(slug, next);
       return { success: true, slug, ...next };
     }
-    const data = await response.json();
+
     saveLocalStats(slug, { likes: data.likes, views: data.views });
     return data;
   } catch {
@@ -97,8 +99,9 @@ export async function recordLike(slug: string) {
         visitorId: getVisitorId()
       })
     });
+    const data = response.ok ? await response.json() : null;
 
-    if (!response.ok) {
+    if (!response.ok || data?.offline) {
       const local = readLocalStats(slug);
       const next = { ...local, likes: local.likes + 1 };
       saveLocalStats(slug, next);
@@ -106,7 +109,6 @@ export async function recordLike(slug: string) {
       return { success: true, slug, ...next };
     }
 
-    const data = await response.json();
     if (data.success !== false) {
       localStorage.setItem(`${LIKED_PREFIX}${slug}`, 'true');
     }

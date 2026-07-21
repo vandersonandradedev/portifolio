@@ -49,15 +49,9 @@ async function readStatsForSlug(redis: Redis, slug: string) {
 export async function GET() {
   const redis = getRedis();
 
+  // Sem Redis (ex.: localhost) — resposta vazia, cliente usa localStorage
   if (!redis) {
-    return NextResponse.json(
-      {
-        error: 'Storage not configured',
-        message:
-          'Conecte o Upstash Redis ao projeto na Vercel para persistir visualizações e curtidas.'
-      },
-      { status: 503 }
-    );
+    return NextResponse.json({});
   }
 
   try {
@@ -75,23 +69,23 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const redis = getRedis();
 
-  if (!redis) {
-    return NextResponse.json(
-      {
-        error: 'Storage not configured',
-        message:
-          'Conecte o Upstash Redis ao projeto na Vercel para persistir visualizações e curtidas.'
-      },
-      { status: 503 }
-    );
-  }
-
   try {
     const body = await req.json();
     const { slug, action, visitorId } = body || {};
 
     if (!slug || typeof slug !== 'string') {
       return NextResponse.json({ error: 'Slug inválido' }, { status: 400 });
+    }
+
+    // Offline / sem Redis: sinaliza para o cliente persistir localmente
+    if (!redis) {
+      return NextResponse.json({
+        success: false,
+        offline: true,
+        slug,
+        likes: 0,
+        views: 0
+      });
     }
 
     if (action === 'view') {
