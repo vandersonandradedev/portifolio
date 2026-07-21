@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-axion: #5eead4;
+  --color-axion-bright: #2dd4bf;
+  --color-axion-dim: rgba(94, 234, 212, 0.28);
+  --color-ink: #e8f7f5;
+  --color-muted: #8ba5a1;
+  --color-void: #03070a;
+  --color-panel: rgba(6, 16, 22, 0.72);
+  --font-sans: var(--font-axion-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-axion-display), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-axion-mono), ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--color-void);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(94, 234, 212, 0.25);
+  color: white;
+}
+
+.axion-gradient {
+  background:
+    radial-gradient(ellipse 55% 40% at 50% 30%, rgba(20, 70, 80, 0.35), transparent 65%),
+    radial-gradient(ellipse 80% 60% at 85% 0%, rgba(10, 40, 55, 0.4), transparent 50%),
+    linear-gradient(180deg, #03070a 0%, #050a0e 50%, #071018 100%);
+}
+
+.glass {
+  background: linear-gradient(160deg, rgba(94, 234, 212, 0.05), rgba(6, 16, 22, 0.78));
+  border: 1px solid rgba(94, 234, 212, 0.16);
+  backdrop-filter: blur(16px);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #f0fdfa 10%, #5eead4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
