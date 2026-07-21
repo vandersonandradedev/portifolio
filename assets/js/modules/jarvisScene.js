@@ -15,9 +15,10 @@ export default class JarvisScene {
     this.targetRotation = { x: 0, y: 0 };
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.isMobile = window.innerWidth < 768;
-    this.particleCount = this.isMobile ? 2500 : 12000;
+    this.particleCount = this.isMobile ? 1800 : 6000;
     this.raf = null;
     this.running = false;
+    this.ambient = false;
 
     this.init();
   }
@@ -222,6 +223,25 @@ export default class JarvisScene {
 
     this.renderer.render(this.scene, this.camera);
   };
+
+  setAmbientMode(enabled = true) {
+    this.ambient = enabled;
+    if (this.core?.material) {
+      this.core.material.emissiveIntensity = enabled ? 0.9 : 1.8;
+    }
+    if (this.coreWire?.material) {
+      this.coreWire.material.opacity = enabled ? 0.18 : 0.35;
+    }
+    if (this.particles?.material) {
+      this.particles.material.opacity = enabled ? 0.45 : 0.85;
+      this.particles.material.size = enabled
+        ? (this.isMobile ? 0.018 : 0.025)
+        : (this.isMobile ? 0.025 : 0.035);
+    }
+    this.rings?.forEach((ring) => {
+      if (ring.material) ring.material.opacity = enabled ? 0.22 : 0.45;
+    });
+  }
 
   start() {
     if (this.running) return;

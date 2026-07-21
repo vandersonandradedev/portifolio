@@ -1,97 +1,111 @@
 /**
- * Intro / Apresentação
- * Exibe sequência de frases e depois esconde o overlay
+ * Boot AXION Systems — primeira impressão curta, depois entrega o portfólio
+ * Objetivo: identidade técnica, sem bloquear nome/projetos/contato
  */
 
-const INTRO_PHRASES = [
-  'Já pensou em ter um site?',
-  'Uma loja virtual?',
-  'Gerenciar o estoque da sua loja?',
-  'Automações?',
-  'Controle financeiro?',
-  'E muito mais...'
-];
-
-const PHRASE_DURATION = 2200;
-const FADE_OUT_BEFORE_NEXT = 400;
-const CTA_DURATION = 3500;
-const FINAL_FADE_DURATION = 800;
+const BOOT_SKIP_KEY = 'axion_boot_seen';
 
 export default class Intro {
   constructor() {
     this.overlay = document.getElementById('intro-overlay');
-    this.phraseEl = document.getElementById('intro-phrase');
-    this.ctaEl = document.getElementById('intro-cta');
-    this.btnEl = document.getElementById('intro-btn');
     this.skipEl = document.getElementById('intro-skip');
+    this.progressEl = document.getElementById('axion-boot-progress');
+    this.percentEl = document.getElementById('axion-boot-percent');
+    this.stageEl = document.getElementById('axion-boot-stage');
+    this.modulesEl = document.getElementById('axion-boot-modules');
+    this.welcomeEl = document.getElementById('axion-boot-welcome');
+    this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (!this.overlay || !this.phraseEl) return;
+    if (!this.overlay) return;
 
-    this.ctaEl?.setAttribute('aria-hidden', 'true');
-    this.btnEl?.setAttribute('aria-hidden', 'true');
-    document.body.classList.add('intro-active');
-
+    document.body.classList.add('intro-active', 'axion-booting');
     this.skipEl?.addEventListener('click', () => this.close());
+
+    // Revisitantes: boot curto (~1.2s)
+    this.seenBefore = sessionStorage.getItem(BOOT_SKIP_KEY) === '1';
+
+    if (this.reducedMotion) {
+      this.close();
+      return;
+    }
 
     this.run();
   }
 
-  run() {
-    let index = 0;
+  async run() {
+    const stages = this.seenBefore
+      ? [
+          { text: 'Restoring session...', progress: 100, wait: 500 }
+        ]
+      : [
+          { text: 'INITIALIZING...', progress: 12, wait: 450 },
+          { text: 'Loading Neural Engine...', progress: 48, wait: 550 },
+          { text: 'Syncing repositories...', progress: 78, wait: 500 },
+          { text: 'AI Modules Loaded', progress: 100, wait: 400 }
+        ];
 
-    const showNext = () => {
-      if (index < INTRO_PHRASES.length) {
-        this.phraseEl.classList.remove('intro-overlay__phrase--out');
-        this.phraseEl.textContent = INTRO_PHRASES[index];
-        this.phraseEl.classList.add('intro-overlay__phrase--active');
-        this.phraseEl.setAttribute('data-index', String(index));
+    for (const stage of stages) {
+      if (this._closed) return;
+      this.setStage(stage.text, stage.progress);
+      await this.wait(stage.wait);
+    }
 
-        index += 1;
+    if (this._closed) return;
 
-        setTimeout(() => {
-          this.phraseEl.classList.remove('intro-overlay__phrase--active');
-          this.phraseEl.classList.add('intro-overlay__phrase--out');
-          setTimeout(showNext, FADE_OUT_BEFORE_NEXT);
-        }, PHRASE_DURATION);
-      } else {
-        this.showCta();
-      }
-    };
+    if (!this.seenBefore) {
+      this.showModules();
+      await this.wait(700);
+      if (this._closed) return;
+    }
 
-    showNext();
+    this.showWelcome();
+    await this.wait(this.seenBefore ? 400 : 900);
+    if (this._closed) return;
+
+    this.close();
   }
 
-  showCta() {
-    this.phraseEl.classList.remove('intro-overlay__phrase--active', 'intro-overlay__phrase--out');
-    this.phraseEl.textContent = '';
-    this.phraseEl.style.display = 'none';
+  setStage(text, progress) {
+    if (this.stageEl) this.stageEl.textContent = text;
+    if (this.progressEl) this.progressEl.style.width = `${progress}%`;
+    if (this.percentEl) this.percentEl.textContent = `${progress}%`;
+  }
 
-    this.ctaEl?.classList.add('intro-overlay__cta--visible');
-    this.ctaEl?.removeAttribute('aria-hidden');
+  showModules() {
+    this.modulesEl?.classList.add('is-visible');
+  }
 
-    this.btnEl?.classList.add('intro-overlay__btn--visible');
-    this.btnEl?.removeAttribute('aria-hidden');
+  showWelcome() {
+    this.welcomeEl?.classList.add('is-visible');
+    if (this.stageEl) this.stageEl.textContent = 'Welcome, Visitor.';
+  }
 
-    const once = (fn) => (e) => {
-      if (e) e.preventDefault();
-      fn();
-    };
-    this.btnEl?.addEventListener('click', once(() => this.close()));
-
-    this.ctaTimeout = setTimeout(() => this.close(), CTA_DURATION);
+  wait(ms) {
+    return new Promise((resolve) => {
+      this._timer = setTimeout(resolve, ms);
+    });
   }
 
   close() {
     if (this._closed) return;
     this._closed = true;
-    if (this.ctaTimeout) clearTimeout(this.ctaTimeout);
+    if (this._timer) clearTimeout(this._timer);
+
+    try {
+      sessionStorage.setItem(BOOT_SKIP_KEY, '1');
+    } catch {
+      // ignore
+    }
 
     this.overlay.classList.add('intro-overlay--hidden');
     document.body.classList.remove('intro-active');
+    document.body.classList.add('axion-ready');
+    document.body.classList.remove('axion-booting');
+
+    document.dispatchEvent(new CustomEvent('axion:boot-complete'));
 
     setTimeout(() => {
-      this.overlay.remove();
-      document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
-    }, FINAL_FADE_DURATION);
+      this.overlay?.remove();
+    }, 700);
   }
 }

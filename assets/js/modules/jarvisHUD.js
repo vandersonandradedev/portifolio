@@ -1,124 +1,175 @@
 /**
- * Overlays HUD cinematográficos — scanner, radar, dataflow, hologramas, cursor
+ * AXION Command Center — HUD contido
+ * Após o boot, só mantém status que "pensa" + glow sutil no cursor
  */
+
+const SECTION_THOUGHTS = {
+  home: ['Core idle', 'Systems nominal', 'Awaiting input'],
+  about: ['Reading profile...', 'Mapping experience...', 'Profile loaded'],
+  projects: ['Scanning projects...', 'Analyzing stack...', 'Rendering grid...'],
+  skills: ['Indexing skills...', 'Correlating languages...', 'Skills synced'],
+  experience: ['Loading timeline...', 'Parsing history...', 'Timeline ready'],
+  contact: ['Opening channel...', 'Ready to connect', 'Contact online']
+};
 
 export default class JarvisHUD {
   constructor() {
     this.root = document.getElementById('jarvis-hud');
-    this.cursor = document.getElementById('jarvis-cursor');
+    this.statusEl = document.getElementById('axion-status');
+    this.bootLayer = document.getElementById('axion-boot-hud');
     this.cursorGlow = document.getElementById('jarvis-cursor-glow');
-    this.scanner = document.querySelector('.jarvis-hud__scanner');
-    this.radar = document.querySelector('.jarvis-hud__radar-sweep');
-    this.bars = document.querySelectorAll('[data-hud-bar]');
-    this.holoValues = document.querySelectorAll('[data-hud-value]');
-    this.voiceDots = document.querySelectorAll('.jarvis-hud__voice-dot');
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this.raf = null;
+    this.thoughtTimer = null;
 
     if (!this.root) return;
     this.init();
   }
 
   init() {
-    document.body.classList.add('jarvis-mode');
-    this.bindCursor();
-    this.startMetrics();
-    this.startVoicePulse();
-    this.bindTiltPanels();
+    document.body.classList.add('axion-mode', 'jarvis-mode');
+    this.bindCursorGlow();
+    this.bindSectionThoughts();
+    this.bindSoftTilt();
 
-    if (!this.reducedMotion) {
-      this.animate();
+    document.addEventListener('axion:boot-complete', () => this.enterAmbient());
+
+    // Se boot já fechou / reduzido
+    if (document.body.classList.contains('axion-ready') || this.reducedMotion) {
+      this.enterAmbient();
     }
   }
 
-  bindCursor() {
-    if (!this.cursor || this.isTouch()) {
-      this.cursor?.classList.add('is-hidden');
+  enterAmbient() {
+    this.root.classList.add('jarvis-hud--ambient');
+    this.bootLayer?.classList.add('is-dismantled');
+    this.setStatus('Status · ONLINE');
+
+    // Núcleo 3D mais discreto após boot
+    window.portfolio?.jarvisScene?.setAmbientMode?.(true);
+  }
+
+  bindCursorGlow() {
+    if (!this.cursorGlow || this.isTouch()) {
       this.cursorGlow?.classList.add('is-hidden');
       return;
     }
 
-    document.body.classList.add('jarvis-custom-cursor');
-
+    // Glow acompanha o mouse — sem esconder o cursor nativo
     window.addEventListener('pointermove', (e) => {
-      const x = e.clientX;
-      const y = e.clientY;
-      this.cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      this.cursorGlow.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      document.documentElement.style.setProperty('--cursor-x', `${x}px`);
-      document.documentElement.style.setProperty('--cursor-y', `${y}px`);
+      this.cursorGlow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
     }, { passive: true });
-
-    document.addEventListener('pointerdown', () => {
-      this.cursor.classList.add('is-active');
-    });
-    document.addEventListener('pointerup', () => {
-      this.cursor.classList.remove('is-active');
-    });
   }
 
   isTouch() {
     return window.matchMedia('(pointer: coarse)').matches;
   }
 
-  startMetrics() {
-    const metrics = [
-      { el: document.querySelector('[data-hud-metric="cpu"]'), base: 62, amp: 22 },
-      { el: document.querySelector('[data-hud-metric="mem"]'), base: 48, amp: 18 },
-      { el: document.querySelector('[data-hud-metric="net"]'), base: 71, amp: 15 },
-      { el: document.querySelector('[data-hud-metric="gpu"]'), base: 55, amp: 25 }
-    ];
-
-    this.metrics = metrics.filter(m => m.el);
+  setStatus(text) {
+    if (this.statusEl) this.statusEl.textContent = text;
   }
 
-  startVoicePulse() {
-    this.voicePhase = 0;
+  think(sequence, holdMs = 1600) {
+    if (!sequence?.length) return;
+    clearTimeout(this.thoughtTimer);
+
+    let i = 0;
+    const tick = () => {
+      this.setStatus(sequence[i]);
+      i += 1;
+      if (i < sequence.length) {
+        this.thoughtTimer = setTimeout(tick, 420);
+      } else {
+        this.thoughtTimer = setTimeout(() => {
+          this.setStatus('Status · ONLINE');
+        }, holdMs);
+      }
+    };
+    tick();
   }
 
-  bindTiltPanels() {
-    this.panels = document.querySelectorAll('[data-hud-tilt]');
-    if (!this.panels.length || this.isTouch()) return;
+  bindSectionThoughts() {
+    const sections = document.querySelectorAll('section[id]');
+    if (!sections.length || !('IntersectionObserver' in window)) return;
 
-    window.addEventListener('pointermove', (e) => {
-      const cx = window.innerWidth / 2;
-      const cy = window.innerHeight / 2;
-      const dx = (e.clientX - cx) / cx;
-      const dy = (e.clientY - cy) / cy;
-
-      this.panels.forEach((panel) => {
-        const intensity = parseFloat(panel.dataset.hudTilt) || 6;
-        panel.style.transform = `perspective(900px) rotateY(${dx * intensity}deg) rotateX(${-dy * intensity}deg)`;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        const thoughts = SECTION_THOUGHTS[id];
+        if (thoughts) this.think(thoughts);
       });
+    }, { threshold: 0.35 });
+
+    sections.forEach((section) => observer.observe(section));
+  }
+
+  bindSoftTilt() {
+    if (this.isTouch() || this.reducedMotion) return;
+
+    // Delegation — cards entram depois via sync
+    document.addEventListener('pointermove', (e) => {
+      const panel = e.target.closest?.('.projects__card, .about__stat-card');
+      if (!panel || !this._tiltActive) return;
+
+      const rect = panel.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      panel.style.transform = `perspective(800px) rotateY(${x * 5}deg) rotateX(${-y * 5}deg) translateY(-2px)`;
+    }, { passive: true });
+
+    document.addEventListener('pointerover', (e) => {
+      if (e.target.closest?.('.projects__card, .about__stat-card')) {
+        this._tiltActive = true;
+      }
+    }, { passive: true });
+
+    document.addEventListener('pointerout', (e) => {
+      const panel = e.target.closest?.('.projects__card, .about__stat-card');
+      if (panel && !panel.contains(e.relatedTarget)) {
+        panel.style.transform = '';
+        this._tiltActive = false;
+      }
     }, { passive: true });
   }
 
-  animate = () => {
-    this.raf = requestAnimationFrame(this.animate);
-    const t = performance.now() * 0.001;
+  /**
+   * Scan cinematográfico antes de abrir um projeto
+   */
+  async runProjectScan(projectTitle = 'Project') {
+    const overlay = document.getElementById('axion-scan');
+    if (!overlay || this.reducedMotion) return;
 
-    this.metrics?.forEach((m, i) => {
-      const value = Math.round(m.base + Math.sin(t * (1.2 + i * 0.3) + i) * m.amp);
-      m.el.textContent = `${Math.max(8, Math.min(99, value))}%`;
-    });
+    const fill = overlay.querySelector('.axion-scan__fill');
+    const label = overlay.querySelector('.axion-scan__label');
+    const title = overlay.querySelector('.axion-scan__title');
 
-    this.bars.forEach((bar, i) => {
-      const width = 40 + Math.sin(t * 1.5 + i * 0.8) * 28 + Math.sin(t * 0.7 + i) * 12;
-      bar.style.width = `${Math.max(18, Math.min(96, width))}%`;
-    });
+    if (title) title.textContent = projectTitle;
+    overlay.classList.add('is-active');
+    overlay.setAttribute('aria-hidden', 'false');
 
-    this.voiceDots.forEach((dot, i) => {
-      const scale = 0.55 + Math.abs(Math.sin(t * 4 + i * 0.7)) * 0.9;
-      dot.style.transform = `scaleY(${scale})`;
-      dot.style.opacity = String(0.4 + scale * 0.4);
-    });
+    const steps = [
+      { text: 'Scanning...', width: 18 },
+      { text: 'Loading...', width: 42 },
+      { text: 'Analyzing...', width: 68 },
+      { text: 'Rendering...', width: 88 },
+      { text: 'ACCESS GRANTED', width: 100 }
+    ];
 
-    if (this.radar) {
-      this.radar.style.transform = `rotate(${(t * 48) % 360}deg)`;
+    for (const step of steps) {
+      if (label) label.textContent = step.text;
+      if (fill) fill.style.width = `${step.width}%`;
+      await new Promise((r) => setTimeout(r, 160));
     }
-  };
+
+    await new Promise((r) => setTimeout(r, 220));
+    overlay.classList.remove('is-active');
+    overlay.setAttribute('aria-hidden', 'true');
+    if (fill) fill.style.width = '0%';
+  }
 
   destroy() {
-    if (this.raf) cancelAnimationFrame(this.raf);
+    clearTimeout(this.thoughtTimer);
   }
 }

@@ -50,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let jarvisScene = null;
   initJarvisScene().then((scene) => {
     jarvisScene = scene;
+    if (document.body.classList.contains('axion-ready')) {
+      scene?.setAmbientMode?.(true);
+    }
     if (window.portfolio) window.portfolio.jarvisScene = scene;
   });
 
@@ -58,10 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
   measurePerformance();
 
   // Console personalizado
-  console.log('%c⚡ SYSTEM ONLINE — VandinDev221',
-    'font-size: 18px; font-weight: bold; color: #00eaff;');
-  console.log('%c🔗 GitHub: https://github.com/VandinDev221',
-    'font-size: 12px; color: #00eaff;');
+  console.log('%cAXION SYSTEMS · ONLINE',
+    'font-size: 16px; font-weight: bold; color: #5eead4;');
+  console.log('%chttps://github.com/VandinDev221',
+    'font-size: 12px; color: #5eead4;');
 
   // Easter egg
   let konamiCode = [];

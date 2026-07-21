@@ -414,6 +414,11 @@ class Projects {
   async openModal(project) {
     if (!this.modal) return;
 
+    const scan = window.portfolio?.jarvisHUD?.runProjectScan;
+    if (typeof scan === 'function') {
+      await scan.call(window.portfolio.jarvisHUD, project.title);
+    }
+
     const slug = project.slug || String(project.id);
     const result = await recordView(slug);
     if (result) {
