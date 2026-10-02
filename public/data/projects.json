@@ -1,62 +1,166 @@
 {
-  "githubUsername": "VandinDev221",
-  "excludeRepos": ["portifolio", "portfolio"],
+  "githubUsername": "vandersonandradedev",
+  "excludeRepos": ["portifolio", "portfolio", "vandersonandradedev"],
   "overrides": [
     {
-      "repo": "vida_saudavel",
-      "title": "Vida Saudável",
-      "description": "Plataforma PWA completa para acompanhamento de bem-estar, hábitos e métricas de saúde diárias.",
-      "longDescription": "Plataforma web desenvolvida com HTML, CSS, JavaScript, PHP e MySQL, focada em atividades diárias e bem-estar. Oferece contagem de tempo, registro de caminhadas com gráficos, organização de estudos, metas nutricionais, monitoramento de sono, jogos interativos e integração PWA para experiência nativa em dispositivos móveis.",
+      "repo": "-HubCentral",
+      "title": "HubCentral Admin",
+      "description": "Plataforma de gestão administrativa centralizada para controle de operações e serviços.",
+      "longDescription": "Dashboard e painel administrativo web para gerenciamento de operações, usuários e serviços corporativos. Interface moderna, rápida e altamente escalável.",
+      "category": "dashboard",
+      "technologies": ["TypeScript", "React", "Next.js", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://hub-central-admin-web.vercel.app",
+      "featured": true
+    },
+    {
+      "repo": "-Vision-Solutions",
+      "title": "Vision Solutions",
+      "description": "Portal corporativo e landing page para empresa de tecnologia e consultoria em TI.",
+      "longDescription": "Site institucional e landing page com design inovador, seções interativas e otimização para motores de busca e conversão.",
+      "category": "landing",
+      "technologies": ["TypeScript", "React", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://visionsolutionsbr.vercel.app",
+      "featured": true
+    },
+    {
+      "repo": "adv_cargo",
+      "title": "ADV Cargo",
+      "description": "Sistema de gestão logística e rastreamento de cargas e transportes.",
+      "longDescription": "Aplicação web desenvolvida para otimizar processos logísticos, controle de frota, manifesto de cargas e acompanhamento de entregas.",
       "category": "web",
-      "technologies": ["HTML", "CSS", "JavaScript", "PHP", "MySQL", "Bootstrap", "PWA", "Chart.js"],
+      "technologies": ["TypeScript", "React", "Node.js", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://adv-cargo.vercel.app",
+      "featured": true
+    },
+    {
+      "repo": "analytic_pulse",
+      "title": "Analytic Pulse",
+      "description": "Dashboard de inteligência de dados e analytics para visualização de métricas em tempo real.",
+      "longDescription": "Plataforma analítica com gráficos interativos, monitoramento de performance e relatórios detalhados para tomada de decisão estratégica.",
+      "category": "dashboard",
+      "technologies": ["TypeScript", "React", "Chart.js", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://analytic-pulse.vercel.app",
       "featured": true
     },
     {
       "repo": "anucios-bet",
       "title": "Anúncios Bet",
-      "description": "Aplicação web para gestão e exibição de anúncios com interface moderna e deploy na Vercel.",
-      "longDescription": "Projeto web desenvolvido em JavaScript com foco em interface responsiva e experiência fluida. Publicado na Vercel com integração contínua via GitHub, demonstrando domínio em desenvolvimento frontend moderno e boas práticas de deploy.",
+      "description": "Aplicação web para gestão e exibição de anúncios com interface moderna.",
+      "longDescription": "Projeto web desenvolvido com foco em interface responsiva e experiência fluida. Publicado na Vercel com integração contínua via GitHub.",
       "category": "web",
       "technologies": ["JavaScript", "HTML", "CSS", "Vercel"],
+      "liveUrl": "https://anucios-bet.vercel.app",
+      "featured": false
+    },
+    {
+      "repo": "barberCRM",
+      "title": "Barber CRM",
+      "description": "Sistema completo de gestão, agendamentos e CRM para barbearias e salões de beleza.",
+      "longDescription": "Painel de controle para agendamento online, controle financeiro, histórico de clientes e gestão de barbeiros com interface mobile-friendly.",
+      "category": "web",
+      "technologies": ["TypeScript", "React", "Node.js", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://barber-painel.vercel.app",
       "featured": true
     },
     {
-      "repo": "historico_escolar",
-      "title": "Histórico Escolar",
-      "description": "Sistema para gerenciar escolas e históricos escolares de um município.",
-      "longDescription": "Aplicação full stack desenvolvida em TypeScript para gestão de instituições de ensino e registros acadêmicos municipais. Inclui interface moderna, tipagem estática e deploy automatizado na Vercel.",
+      "repo": "EsperaA-",
+      "title": "EsperaAí",
+      "description": "Plataforma de gerenciamento de filas virtuais e atendimento dinâmico de clientes.",
+      "longDescription": "Solução inovadora para redução de tempo de espera presencial com senhas virtuais, notificações e acompanhamento de posição em tempo real.",
       "category": "web",
-      "technologies": ["TypeScript", "React", "Node.js", "Vercel"],
-      "featured": true
+      "technologies": ["TypeScript", "React", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://esperaaii.vercel.app",
+      "featured": false
     },
     {
       "repo": "Habithub_Analytics",
       "title": "Habithub Analytics",
       "description": "Dashboard interativo para visualização de dados, métricas e hábitos com gráficos dinâmicos.",
-      "longDescription": "Dashboard analítico desenvolvido em TypeScript para monitoramento de métricas e visualização de dados. Inclui gráficos interativos, filtros e interface responsiva, ideal para acompanhamento de indicadores de desempenho.",
+      "longDescription": "Dashboard analítico desenvolvido em TypeScript para monitoramento de métricas e visualização de dados. Inclui gráficos interativos e filtros.",
       "category": "dashboard",
       "technologies": ["TypeScript", "JavaScript", "Chart.js", "CSS", "Vercel"],
-      "featured": true
+      "liveUrl": "https://habithub-analytics.vercel.app",
+      "featured": false
+    },
+    {
+      "repo": "historico_escolar",
+      "title": "Histórico Escolar",
+      "description": "Sistema para gerenciar escolas e históricos escolares de um município.",
+      "longDescription": "Aplicação full stack desenvolvida para gestão de instituições de ensino e registros acadêmicos municipais.",
+      "category": "web",
+      "technologies": ["TypeScript", "React", "Node.js", "Vercel"],
+      "liveUrl": "https://historico-escolar.vercel.app",
+      "featured": false
+    },
+    {
+      "repo": "Kaucell",
+      "title": "Kaucell Assistência",
+      "description": "Catálogo digital e plataforma de agendamento de serviços de assistência técnica.",
+      "longDescription": "Plataforma web responsiva para exibição de serviços, produtos e solicitação de orçamentos para assistência de dispositivos móveis.",
+      "category": "web",
+      "technologies": ["TypeScript", "React", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://kaucell.vercel.app",
+      "featured": false
+    },
+    {
+      "repo": "LandingPage",
+      "title": "Landing Page Didactics",
+      "description": "Landing page educacional responsiva com animações suaves e formulário de contato.",
+      "longDescription": "Landing page com layout limpo e moderno para divulgação de cursos e serviços educacionais.",
+      "category": "landing",
+      "technologies": ["HTML5", "CSS3", "JavaScript", "Vercel"],
+      "liveUrl": "https://landing-page-didactics.vercel.app",
+      "featured": false
     },
     {
       "repo": "landing_page_carros",
-      "title": "Landing Page Carros",
-      "description": "Landing page responsiva para apresentação de veículos com design moderno e animações.",
-      "longDescription": "Landing page desenvolvida em JavaScript com layout responsivo, seções de destaque para produtos automotivos e otimização para conversão. Deploy na Vercel com carregamento rápido e experiência mobile-first.",
+      "title": "Alpha Carros",
+      "description": "Landing page responsiva para apresentação de veículos com design moderno.",
+      "longDescription": "Landing page com seções de destaque para produtos automotivos, animações e otimização para conversão.",
       "category": "landing",
       "technologies": ["JavaScript", "HTML", "CSS", "Vercel"],
       "liveUrl": "https://alphacarros.vercel.app",
       "featured": false
     },
     {
-      "repo": "LandingPage",
-      "title": "Landing Page Moderna",
-      "description": "Landing page responsiva com animações suaves, formulário de contato e design clean.",
-      "longDescription": "Landing page desenvolvida com HTML5, CSS3 e JavaScript. Inclui animações suaves, formulário de contato integrado, layout responsivo e otimização para SEO e performance.",
-      "category": "landing",
-      "technologies": ["HTML5", "CSS3", "JavaScript", "Vercel"],
-      "image": "./assets/images/projects/landing-page-didactics.png",
+      "repo": "leads",
+      "title": "Leads BR",
+      "description": "Plataforma de captura, gestão e nutrição de leads para equipes de vendas.",
+      "longDescription": "Ferramenta para centralização de contatos, qualificação de clientes potenciais e automação de funis de venda.",
+      "category": "web",
+      "technologies": ["TypeScript", "React", "Node.js", "Vercel"],
+      "liveUrl": "https://leadsbr.vercel.app",
       "featured": false
+    },
+    {
+      "repo": "Retail-OS",
+      "title": "RetailSync OS",
+      "description": "Sistema de gestão operacional e controle de estoque para estabelecimentos comerciais.",
+      "longDescription": "Plataforma completa para varejo com gerenciamento de vendas, produtos, clientes e relatórios operacionais.",
+      "category": "web",
+      "technologies": ["TypeScript", "React", "Node.js", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://retailsyncbr.vercel.app",
+      "featured": false
+    },
+    {
+      "repo": "SaaS-B2B",
+      "title": "FlowOS Connect",
+      "description": "Solução SaaS B2B para integração de processos empresariais e fluxos de trabalho.",
+      "longDescription": "Plataforma de automação e conexão de fluxos corporativos B2B para otimizar operações e produtividade de equipes.",
+      "category": "web",
+      "technologies": ["TypeScript", "React", "Node.js", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://flowos-connect.vercel.app",
+      "featured": false
+    },
+    {
+      "repo": "vida_saudavel",
+      "title": "Vida Saudável",
+      "description": "Plataforma PWA completa para acompanhamento de bem-estar, hábitos e métricas de saúde.",
+      "longDescription": "Plataforma web PWA para acompanhamento de rotinas de saúde, metas nutricionais e exercícios.",
+      "category": "web",
+      "technologies": ["HTML", "CSS", "JavaScript", "PHP", "MySQL", "PWA"],
+      "liveUrl": "https://vida-saudavel-rho.vercel.app",
+      "featured": true
     }
   ]
 }

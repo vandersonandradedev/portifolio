@@ -6,7 +6,7 @@ const CACHE_SECONDS = 300;
 function githubHeaders() {
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
-    'User-Agent': 'VandinDev221-Portfolio'
+    'User-Agent': 'vandersonandradedev-Portfolio'
   };
   if (process.env.GITHUB_TOKEN) {
     headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
@@ -82,7 +82,7 @@ async function fetchLanguagesMap(
 }
 
 export async function GET(req: NextRequest) {
-  const username = (req.nextUrl.searchParams.get('username') || 'VandinDev221').trim();
+  const username = (req.nextUrl.searchParams.get('username') || 'vandersonandradedev').trim();
 
   if (!username) {
     return NextResponse.json({ error: 'username obrigatório' }, { status: 400 });

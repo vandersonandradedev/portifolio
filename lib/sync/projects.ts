@@ -95,6 +95,14 @@ async function fetchVercelPreview(liveUrl: string): Promise<string> {
   return buildScreenshotUrl(liveUrl);
 }
 
+function normalizeUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 export function getProjectsConfig(): ProjectsConfig {
   return projectsConfig as ProjectsConfig;
 }
@@ -124,9 +132,9 @@ export async function syncProjects(): Promise<{
   source: 'github' | 'fallback';
 }> {
   const config = getProjectsConfig();
-  const username = config.githubUsername || 'VandinDev221';
+  const username = config.githubUsername || 'vandersonandradedev';
   const excludeRepos = new Set(
-    (config.excludeRepos || ['portifolio', 'portfolio']).map((n) => n.toLowerCase())
+    (config.excludeRepos || ['portifolio', 'portfolio', 'vandersonandradedev']).map((n) => n.toLowerCase())
   );
   const overrideMap = new Map(
     (config.overrides || []).map((item) => [item.repo.toLowerCase(), item])
@@ -142,7 +150,6 @@ export async function syncProjects(): Promise<{
 
     const deployed = publicRepos
       .filter((repo) => !excludeRepos.has(repo.name.toLowerCase()))
-      .filter((repo) => isVercelDeploy(repo.homepage))
       .sort(
         (a, b) =>
           new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
@@ -161,7 +168,7 @@ export async function syncProjects(): Promise<{
     // Não logar aqui — em RSC o warn vai para o console do browser.
     const projects = await Promise.all(
       (config.overrides || []).map(async (override, index) =>
-        fallbackFromOverride(override, config.githubUsername, index)
+        fallbackFromOverride(override, config.githubUsername || 'vandersonandradedev', index)
       )
     );
     return { projects, repoCount: projects.length, source: 'fallback' };
@@ -174,12 +181,12 @@ async function mergeProject(
   languages: Record<string, number>,
   index: number
 ): Promise<Project> {
-  const liveUrl = override?.liveUrl || repo.homepage;
+  const liveUrl = normalizeUrl(override?.liveUrl || repo.homepage);
   const title = override?.title || formatRepoTitle(repo.name);
   const description =
     override?.description ||
     repo.description ||
-    `Projeto ${title} publicado na Vercel.`;
+    `Projeto ${title} publicado.`;
 
   let image: string | null = null;
   let imageSource: Project['imageSource'] = 'gradient';

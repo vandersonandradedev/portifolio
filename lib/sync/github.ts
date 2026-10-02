@@ -3,7 +3,7 @@ const GITHUB_API = 'https://api.github.com';
 function githubHeaders() {
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
-    'User-Agent': 'VandinDev221-Portfolio'
+    'User-Agent': 'vandersonandradedev-Portfolio'
   };
   if (process.env.GITHUB_TOKEN) {
     headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
